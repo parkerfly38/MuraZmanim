@@ -11,54 +11,26 @@ component accessors=true output=false {
 
 	property name='$';
 
-	include 'plugin/settings.cfm';
-	include '../../config/applicationSettings.cfm';
-	include '../../config/mappings.cfm';
-	include '../mappings.cfm';
+	this.pluginPath = GetDirectoryFromPath(GetCurrentTemplatePath());
+	this.muraroot = Left(this.pluginPath, Find('plugins', this.pluginPath) - 1);
+	this.depth = ListLen(RemoveChars(this.pluginPath,1, Len(this.muraroot)), '\/');  
+	this.includeroot = RepeatString('../', this.depth);
 
-	public any function onApplicationStart() {
-		include '../../config/appcfc/onApplicationStart_include.cfm';
-		return true;
+	if ( DirectoryExists(this.muraroot & 'core') ) {
+		// Using 7.1
+		this.muraAppConfigPath = this.includeroot & 'core/';
+		include this.muraAppConfigPath & 'appcfc/applicationSettings.cfm';
+	} else {
+		// Pre 7.1
+		this.muraAppConfigPath = this.includeroot & 'config';
+		include this.includeroot & 'config/applicationSettings.cfm';
+
+		try {
+			include this.includeroot & 'config/mappings.cfm';
+			include this.includeroot & 'plugins/mappings.cfm';
+		} catch(any e) {}
 	}
 
-	public any function onRequestStart(required string targetPage) {
-		include '../../config/appcfc/onRequestStart_include.cfm';
-
-		if (
-			(
-				StructKeyExists(variables.settings, 'reloadApplicationOnEveryRequest')
-				&& variables.settings.reloadApplicationOnEveryRequest
-			)
-			|| !StructKeyExists(application, 'appInitializedTime')
-		) {
-			onApplicationStart();
-		}
-
-		if ( isSessionExpired() ) {
-			lock scope='session' type='exclusive' timeout=10 {
-				setupSession();
-			}
-		}
-
-		// You may want to change the methods being used to secure the request
-		secureRequest();
-		return true;
-	}
-
-	public void function onRequest(required string targetPage) {
-		var $ = get$();
-		var pluginConfig = $.getPlugin(variables.settings.pluginName);
-		include arguments.targetPage;
-	}
-
-	public void function onSessionStart() {
-		include '../../config/appcfc/onSessionStart_include.cfm';
-		setupSession();
-	}
-
-	public void function onSessionEnd() {
-		include '../../config/appcfc/onSessionEnd_include.cfm';
-	}
 
 
 	// ----------------------------------------------------------------------

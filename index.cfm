@@ -49,7 +49,7 @@ if ( !IsDefined('$') ) {
 		if (isDefined("item.subcat")) hebCalItem.setSubcat(item.subcat);
 		if (isDefined("item.memo")) hebCalItem.setMemo(item.memo);
 		hebCalItem.setCategory(item.category);
-		hebCalItem.setHebrew(item.hebrew);
+		hebCalItem.setHebrew(URLEncodedFormat(item.hebrew,'utf-8'));
 		hebCalItem.setTitle(item.title);
 		
 		if (item.category == "parashat")
@@ -97,8 +97,17 @@ if ( !IsDefined('$') ) {
 </cfscript>
 	
 </cfif>
+<cfif isDefined("form.hebcal")>
+	<cfset currentHebCal = EntityLoadByPK("MuraZmanimSettings", 1) />
+	<cfif isnull(currentHebCal) or arrayisEmpty(currentHebCal)>
+		<cfset currentHebCal = EntityNew("MuraZmanimSettings") />
+	</cfif>
+	<cfset currentHebCal.setHebCalId(form.hebcal) />
+	<cfset EntitySave(currentHebCal) />
+</cfif>	
 <cfscript>
 	hebcals = EntityLoad("HebCal");
+	selectedHebCal = EntityLoad("MuraZmanimSettings");
 </cfscript>
 <style type="text/css">
 	#bodyWrap h3{padding-top:1em;}
@@ -126,18 +135,25 @@ if ( !IsDefined('$') ) {
 	
 	<form action="index.cfm" method="post">
 		<div class="form-group">
+			<cfif !isnull(selectedHebCal) AND !ArrayIsEmpty(selectedHebCal)>
+				<cfset selectedCal = selectedHebCal[0].getHebCalId() />
+			<cfelse>
+				<cfset selectedCal = 1 />
+			</cfif>
 			<label>Select a Hebrew Calendar Location to Display</label>
 			<select name="hebcal" id="hebcal">
 				<cfloop array="#hebcals#" index="cal">
-					<option value="#cal.getId()#">#cal.getTitle()#</option>
+					<option value="#cal.getId()#" <cfif selectedCal eq cal.getId()>selected</cfif>>#cal.getTitle()#</option>
 				</cfloop>
 			</select>
+			<input type="submit" value="Set Site Zmanim Location" class="btn btn-default" />
+		</div>
 	</form>
 	<h3>Need help?</h3>
 	<p>If you're running into an issue, please let me know at <a href="https://github.com/parkerfly38/MuraZmanim/issues">https://github.com/parkerfly38/muraZmanim/issues</a> and I'll try to address it as soon as I can.</p>
 
-	<h3>!שלום<br />
-	<a href="http://www.covebrookcode.com">?Brian Kresge, MBA, MCSD</a></h3>
+	<h3>!שלום</h3>
+	<a href="http://www.covebrookcode.com">Brian Kresge, MBA, MCSD</a>
 </div>
 </cfoutput></cfsavecontent>
 <cfoutput>

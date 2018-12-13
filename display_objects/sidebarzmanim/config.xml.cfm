@@ -1,14 +1,14 @@
 <cfscript>
 /**
 *
-* This file is part of MuraPlugin
+* This file is part of MuraZmanim
 *
-* Copyright 2013-2016 Stephen J. Withington, Jr.
+* Copyright 2013-2018 Brian Kresge, MBA, MCSD
 * Licensed under the Apache License, Version v2.0
 * http://www.apache.org/licenses/LICENSE-2.0
 *
 */
 </cfscript>
-<mura name="Say Hello" contenttypes="*" iconclass="mi-phone">
+<mura name="Zmanim Sidebar" contenttypes="*" iconclass="mi-calendar">
   <!-- You can add class extensions, image sizes, etc. here -->
 </mura>

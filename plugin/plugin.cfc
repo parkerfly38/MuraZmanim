@@ -14,6 +14,7 @@ component accessors=true extends='mura.plugin.plugincfc' output=false {
 
 	public void function install() {
 		// Do custom installation stuff
+		OrmReload();
 	}
 
 	public void function update() {

@@ -17,36 +17,19 @@
 	}
 	
 </cfscript>
+<cfquery name="hebCal">
+	SELECT * from HebCal WHERE id = #hebcalId#
+</cfquery>
 <cfquery name="hebCalForRender">
 	SELECT TOP 5 * FROM HebCalItem WHERE ItemID = #hebCalId# AND date >= #Now()#
 	ORDER BY date asc
 </cfquery>
 <cfoutput>
-	<h3>Zmanim</h3>
+	<h3>Zmanim for #ReplaceNoCase(hebCal.title[1],"HebCal 2018 ","")#</h3>
   	<ul>
   		<cfloop query="#hebCalForRender#">
   		<li><strong>#title#</strong><br />#UrlDecode(hebrew,'utf-8')#<br />#DateFormat(date)#
   		<cfif Len(link) gt 0><br /><a href="#link#" target="_blank">Details</a></cfif></li>
   		</cfloop>
   	</ul>
-	
-
-	<!---
-	<script>
-	  // If you wish to add CSS or JS ...
-	  Mura(function(m) { 
-			var pluginpath = '#pluginpath#';
-
-	    m.loader() 
-	      .loadcss(pluginpath + '/display_objects/sayhello/my.css') 
-	      .loadjs(
-	        pluginpath + '/display_objects/sayhello/my.js',
-	        pluginpath + '/display_objects/sayhello/other.js',
-	        function() {
-	          // Do something with the loaded JS
-	        }
-	      ); 
-	  });
-	</script>
-	--->
 </cfoutput>
